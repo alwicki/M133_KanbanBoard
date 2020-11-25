@@ -1,4 +1,5 @@
 import { Application, Router, send } from "https://deno.land/x/oak@v6.3.1/mod.ts"
+import { v4 } from "https://deno.land/std/uuid/mod.ts"
 const app = new Application()
 const router = new Router()
 
@@ -8,10 +9,7 @@ router
     .get("/tasks", context => context.response.body = tasks)
     .post("/tasks", async context => {
         const task = await context.request.body({ type: "json" }).value;
-        if(tasks.length){
-            task.id = Math.max(...tasks.map(task =>task.id))+1;
-        }
-        else task.id = 1;
+        task.id = v4.generate();
         tasks = [
             ...tasks,
             task
