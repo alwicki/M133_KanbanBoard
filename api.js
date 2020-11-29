@@ -10,6 +10,7 @@ router
     .post("/tasks", async context => {
         const task = await context.request.body({ type: "json" }).value;
         task.id = v4.generate();
+        task.position = 0;
         tasks = [
             ...tasks,
             task
