@@ -22,26 +22,27 @@ form.addEventListener("submit", async (event) => {
     $('#taskModal').modal('hide')
     await loadtasks();
 });
-function createTaskRow(task){
+
+function createTaskCard(task) {
     const card = document.createElement("div");
     card.className = "card mb-2";
     const cardBody = document.createElement("div");
     cardBody.className = "card-body"
     const cardTitle = document.createElement("h5");
     cardTitle.className = "card-title"
-    cardTitle.innerHTML =task.description;
+    cardTitle.innerHTML = task.description;
     const deleteBtn = document.createElement("Button");
     deleteBtn.innerText = "delete";
     deleteBtn.className = "btn btn-outline-dark";
-    deleteBtn.onclick = ()=>{deleteTask(task.id)};
+    deleteBtn.onclick = () => { deleteTask(task.id) };
     cardBody.appendChild(cardTitle);
     cardBody.appendChild(deleteBtn);
     card.appendChild(cardBody);
     return card;
 }
 
-async function deleteTask(id){
-    await fetch("/tasks/"+id,{
+async function deleteTask(id) {
+    await fetch("/tasks/" + id, {
         method: "DELETE"
     });
     await loadtasks();
@@ -50,9 +51,7 @@ async function deleteTask(id){
 async function loadLanes() {
     const response = await fetch("/lanes");
     const lanes = await response.json();
-    console.log("lanes", lanes)
     const laneRow = document.getElementById("laneRow");
-    console.log("LANEROW", laneRow)
     lanes.forEach(lane => {
         let laneCol = document.createElement("div");
         laneCol.className = "col bg-light vh-80 border-right";
@@ -70,9 +69,9 @@ async function loadLanes() {
 
         let createBtn = document.createElement("button");
         createBtn.innerText = '+'
-        createBtn.className="btn btn-outline-dark mb-4"
-        createBtn.onclick = ()=>{position = lane.id};
-        createBtn.setAttribute("data-toggle","modal");
+        createBtn.className = "btn btn-outline-dark mb-4"
+        createBtn.onclick = () => { position = lane.id };
+        createBtn.setAttribute("data-toggle", "modal");
         createBtn.setAttribute("data-target", "#taskModal");
 
         titelRow.appendChild(titel);
@@ -81,8 +80,9 @@ async function loadLanes() {
         laneCol.appendChild(createBtn);
         laneCol.appendChild(cardSpace);
         laneRow.appendChild(laneCol);
-        }
-        );
+    }
+    );
+    loadtasks();
 }
 
 async function loadtasks() {
@@ -91,22 +91,22 @@ async function loadtasks() {
     const todo = document.getElementById("0");
     const inprogress = document.getElementById("1");
     const done = document.getElementById("2");
-    todo.innerHTML='';
-    inprogress.innerHTML='';
-    done.innerHTML='';
+    todo.innerHTML = '';
+    inprogress.innerHTML = '';
+    done.innerHTML = '';
     tasks.forEach(task => {
         switch (task.position) {
             case 0:
-                todo.appendChild(createTaskRow(task));
+                todo.appendChild(createTaskCard(task));
                 break;
             case 1:
-                inprogress.appendChild(createTaskRow(task));
+                inprogress.appendChild(createTaskCard(task));
                 break;
             default:
-                done.appendChild(createTaskRow(task));
+                done.appendChild(createTaskCard(task));
                 break;
         }
     });
 }
+
 loadLanes();
-loadtasks();
