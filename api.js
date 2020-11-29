@@ -3,14 +3,20 @@ import { v4 } from "https://deno.land/std/uuid/mod.ts"
 const app = new Application()
 const router = new Router()
 
+const lanes = [
+    { id: 0, titel: "ToDo", color: "#ffca3a" },
+    { id: 1, titel: "in Progress", color: "#1982c4" },
+    { id: 2, titel: "Done", color: "#8ac926" }
+];
+
 let tasks = [];
 
 router
+    .get("/lanes", context => context.response.body = lanes)
     .get("/tasks", context => context.response.body = tasks)
     .post("/tasks", async context => {
         const task = await context.request.body({ type: "json" }).value;
         task.id = v4.generate();
-        task.position = 0;
         tasks = [
             ...tasks,
             task
@@ -30,8 +36,8 @@ router
 app.use(router.routes());
 app.use(async context => {
     await send(context, context.request.url.pathname, {
-      root: `${Deno.cwd()}/frontend`,
-      index: "index.html",
+        root: `${Deno.cwd()}/frontend`,
+        index: "index.html",
     });
-  });
+});
 app.listen({ port: 8000 })
