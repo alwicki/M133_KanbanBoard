@@ -30,9 +30,21 @@ function createTaskRow(task){
     const cardTitle = document.createElement("h5");
     cardTitle.className = "card-title"
     cardTitle.innerHTML =task.description;
+    const deleteBtn = document.createElement("Button");
+    deleteBtn.innerText = "delete";
+    deleteBtn.className = "btn btn-outline-dark";
+    deleteBtn.onclick = ()=>{deleteTask(task.id)};
     cardBody.appendChild(cardTitle);
+    cardBody.appendChild(deleteBtn);
     card.appendChild(cardBody);
     return card;
+}
+
+async function deleteTask(id){
+    await fetch("/tasks/"+id,{
+        method: "DELETE"
+    });
+    await loadtasks();
 }
 
 async function loadLanes() {

@@ -22,7 +22,7 @@ router
             task
         ];
     })
-    .delete("/tasks:id", context => {
+    .delete("/tasks/:id", context => {
         const id = context.params.id;
         tasks = tasks.filter(t => t.id != id);
     })
