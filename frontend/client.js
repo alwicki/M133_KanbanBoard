@@ -1,4 +1,11 @@
+// position of task to create
 let position;
+
+// focus modal if shown
+$('#taskModal').on('shown.bs.modal', function () {
+  $('input').trigger('focus');
+});
+
 const form = document.querySelector('form');
 
 form.addEventListener('submit', async (event) => {
@@ -18,7 +25,7 @@ form.addEventListener('submit', async (event) => {
     method: 'POST',
   });
   $('#taskModal').modal('hide');
-  await loadtasks();
+  await loadTasks();
 });
 
 function createTaskCard(task) {
@@ -30,15 +37,33 @@ function createTaskCard(task) {
   cardTitle.className = 'card-title';
   cardTitle.innerHTML = task.description;
   const deleteBtn = document.createElement('Button');
-  deleteBtn.innerText = 'delete';
   deleteBtn.className = 'btn btn-outline-dark';
+  deleteBtn.innerHTML = "<img src='/assets/trash-fill.svg'>";
   deleteBtn.onclick = () => {
     deleteTask(task.id);
   };
   cardBody.appendChild(cardTitle);
+  if (task.position >= 1) {
+    cardBody.appendChild(createMoveBtn(task, -1));
+  }
   cardBody.appendChild(deleteBtn);
+  if (task.position <= 1) {
+    cardBody.appendChild(createMoveBtn(task, 1));
+  }
   card.appendChild(cardBody);
   return card;
+}
+
+function createMoveBtn(task, direction) {
+  const cardMoveBtn = document.createElement('button');
+  cardMoveBtn.className = 'btn btn-outline-dark';
+  if (direction == -1) {
+    cardMoveBtn.innerHTML = "<img src='/assets/arrow-left.svg'>";
+  } else cardMoveBtn.innerHTML = "<img src='/assets/arrow-right.svg'>";
+  cardMoveBtn.onclick = function () {
+    moveTask(task, direction);
+  };
+  return cardMoveBtn;
 }
 
 async function moveTask(task, direction) {
@@ -57,7 +82,7 @@ async function deleteTask(id) {
   await fetch('/tasks/' + id, {
     method: 'DELETE',
   });
-  await loadtasks();
+  await loadTasks();
 }
 
 async function loadLanes() {
@@ -80,25 +105,28 @@ async function loadLanes() {
     cardSpace.id = lane.id;
 
     let createBtn = document.createElement('button');
-    createBtn.innerText = '+';
-    createBtn.className = 'btn btn-outline-dark mb-4';
+    createBtn.innerHTML = "<img src='/assets/plus.svg'>";
+    createBtn.className = 'btn btn-outline-dark mx-auto mb-4';
     createBtn.onclick = () => {
       position = lane.id;
     };
     createBtn.setAttribute('data-toggle', 'modal');
     createBtn.setAttribute('data-target', '#taskModal');
+    let btnRow = document.createElement('row');
+    btnRow.className = 'row';
+    btnRow.appendChild(createBtn);
 
     titelRow.appendChild(titel);
 
     laneCol.appendChild(titelRow);
-    laneCol.appendChild(createBtn);
+    laneCol.appendChild(btnRow);
     laneCol.appendChild(cardSpace);
     laneRow.appendChild(laneCol);
   });
-  loadtasks();
+  loadTasks();
 }
 
-async function loadtasks() {
+async function loadTasks() {
   const response = await fetch('/tasks');
   const tasks = await response.json();
   const todo = document.getElementById('0');
