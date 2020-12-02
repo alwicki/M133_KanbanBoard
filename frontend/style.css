@@ -1,3 +1,9 @@
 .vh-80 {
   min-height: 80vh !important;
 }
+[draggable=true] {
+  cursor: move;
+}
+[draggable=false] {
+  cursor: not-allowed;
+}

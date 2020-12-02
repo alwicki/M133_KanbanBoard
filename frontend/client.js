@@ -30,6 +30,7 @@ form.addEventListener('submit', async (event) => {
 
 function createTaskCard(task) {
   const card = document.createElement('div');
+  card.id = task.id;
   card.className = 'card mb-2';
   const cardBody = document.createElement('div');
   cardBody.className = 'card-body';
@@ -51,6 +52,8 @@ function createTaskCard(task) {
     cardBody.appendChild(createMoveBtn(task, 1));
   }
   card.appendChild(cardBody);
+  card.draggable="true";
+  card.setAttribute('ondragstart', 'drag(event)');
   return card;
 }
 
@@ -103,6 +106,9 @@ async function loadLanes() {
 
     let cardSpace = document.createElement('div');
     cardSpace.id = lane.id;
+    cardSpace.className ="h-100";
+    cardSpace.setAttribute('ondragover', 'allowDrop(event)');
+    cardSpace.setAttribute('ondrop', 'drop(event)');
 
     let createBtn = document.createElement('button');
     createBtn.innerHTML = "<img src='/assets/plus.svg'>";
@@ -148,6 +154,37 @@ async function loadTasks() {
         break;
     }
   });
+
+}
+
+function allowDrop(ev) {
+    ev.preventDefault();
+}
+
+function drag(ev) {
+    ev.dataTransfer.setData('text', ev.target.id);
+}
+
+function drop(ev) {
+    ev.preventDefault();
+    var data = ev.dataTransfer.getData('text');
+    changePosition(data, ev.target.id);
+}
+async function changePosition(taskId, position) {
+  var description = document.getElementById(taskId).querySelector('.card-title').innerHTML;
+  var task = {
+    id: taskId,
+    description: description,
+    position: parseInt(position)
+  };
+  await fetch('/tasks/' + task.id, {
+    method: 'PUT',
+    body: JSON.stringify(task),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  await loadTasks();
 }
 
 loadLanes();
