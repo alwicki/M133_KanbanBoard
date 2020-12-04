@@ -39,7 +39,7 @@ function createTaskCard(task) {
   cardTitle.innerHTML = task.description;
   const deleteBtn = document.createElement('Button');
   deleteBtn.className = 'btn btn-outline-dark';
-  deleteBtn.innerHTML = "<img src='/assets/trash-fill.svg'>";
+  deleteBtn.innerHTML = "<img src='/assets/icons/trash-fill.svg'>";
   deleteBtn.onclick = () => {
     deleteTask(task.id);
   };
@@ -52,7 +52,7 @@ function createTaskCard(task) {
     cardBody.appendChild(createMoveBtn(task, 1));
   }
   card.appendChild(cardBody);
-  card.draggable="true";
+  card.draggable = 'true';
   card.setAttribute('ondragstart', 'drag(event)');
   return card;
 }
@@ -61,8 +61,8 @@ function createMoveBtn(task, direction) {
   const cardMoveBtn = document.createElement('button');
   cardMoveBtn.className = 'btn btn-outline-dark';
   if (direction == -1) {
-    cardMoveBtn.innerHTML = "<img src='/assets/arrow-left.svg'>";
-  } else cardMoveBtn.innerHTML = "<img src='/assets/arrow-right.svg'>";
+    cardMoveBtn.innerHTML = "<img src='/assets/icons/arrow-left.svg'>";
+  } else cardMoveBtn.innerHTML = "<img src='/assets/icons/arrow-right.svg'>";
   cardMoveBtn.onclick = function () {
     moveTask(task, direction);
   };
@@ -106,12 +106,12 @@ async function loadLanes() {
 
     let cardSpace = document.createElement('div');
     cardSpace.id = lane.id;
-    cardSpace.className ="h-100";
+    cardSpace.className = 'h-100';
     cardSpace.setAttribute('ondragover', 'allowDrop(event)');
     cardSpace.setAttribute('ondrop', 'drop(event)');
 
     let createBtn = document.createElement('button');
-    createBtn.innerHTML = "<img src='/assets/plus.svg'>";
+    createBtn.innerHTML = "<img src='/assets/icons/plus.svg'>";
     createBtn.className = 'btn btn-outline-dark mx-auto mb-4';
     createBtn.onclick = () => {
       position = lane.id;
@@ -154,28 +154,28 @@ async function loadTasks() {
         break;
     }
   });
-
 }
 
 function allowDrop(ev) {
-    ev.preventDefault();
+  ev.preventDefault();
 }
 
 function drag(ev) {
-    ev.dataTransfer.setData('text', ev.target.id);
+  ev.dataTransfer.setData('text', ev.target.id);
 }
 
 function drop(ev) {
-    ev.preventDefault();
-    var data = ev.dataTransfer.getData('text');
-    changePosition(data, ev.target.id);
+  ev.preventDefault();
+  var data = ev.dataTransfer.getData('text');
+  changePosition(data, ev.target.id);
 }
 async function changePosition(taskId, position) {
-  var description = document.getElementById(taskId).querySelector('.card-title').innerHTML;
+  var description = document.getElementById(taskId).querySelector('.card-title')
+    .innerHTML;
   var task = {
     id: taskId,
     description: description,
-    position: parseInt(position)
+    position: parseInt(position),
   };
   await fetch('/tasks/' + task.id, {
     method: 'PUT',
